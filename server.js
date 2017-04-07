@@ -39,29 +39,7 @@ app.use(require('lasso/middleware').serveStatic({
   sendOptions: {maxage: 31536000}
 }));
 
-// Ip Filter
-if (process.env.NODE_ENV === 'production') {
-  const ipWhiteList = JSON.parse(process.env.IP_WHITE_LIST);
 
-  app.use((req, res, next) => {
-    const ips =
-      req.headers['x-forwarded-for'] ||
-      req.socket.remoteAddress ||
-      (req.socket.socket || {}).remoteAddress ||
-      req.ip;
-
-    const clientIp = ips.split(', ').pop();
-
-    if (ipWhiteList.includes(clientIp)) {
-      console.log(`Allowed IP ${clientIp}`);
-      return next();
-    }
-    res.status(403).send(
-      'Speak to the hub management team to get access to the room booking application.'
-    );
-    console.error(`Blocked IP ${clientIp}`);
-  });
-}
 
 // Load Middleware
 app.use(i18nextMiddleware.handle(i18next));
